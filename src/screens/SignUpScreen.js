@@ -1,16 +1,13 @@
-import React, { useState, useContext } from "react";
-import { Button, Text, Input } from "react-native-elements";
+import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import Spacer from "./../components/Spacer";
 import { Context as AuthContext } from "../context/AuthContext";
+import AuthForm from "./../components/AuthForm";
+import NavLink from "../components/NavLink";
 
-const SignUpScreen = ({ navigation }) => {
+const SignUpScreen = () => {
   const { state, signUp } = useContext(AuthContext);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = async () => {
+  const handleSubmit = async ({ email, password }) => {
     if (email && password) {
       signUp({ email, password });
     }
@@ -18,35 +15,16 @@ const SignUpScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Spacer>
-        <Text h3>Sign up for Tracker</Text>
-      </Spacer>
-      <Spacer>
-        <Input
-          label="Email"
-          value={email}
-          required
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-
-        <Input
-          label="Password"
-          value={password}
-          required
-          onChangeText={setPassword}
-          autoCapitalize="none"
-          autoCorrect={false}
-          secureTextEntry
-        />
-        {state.errorMessage ? (
-          <Text style={styles.errorMessage}>{state.errorMessage}</Text>
-        ) : null}
-      </Spacer>
-      <Spacer>
-        <Button title="Sign Up" onPress={handleSubmit} />
-      </Spacer>
+      <AuthForm
+        headerText="Sign Up for Tracker"
+        errorMessage={state.errorMessage}
+        submitButtonText="Sign Up"
+        onSubmit={handleSubmit}
+      />
+      <NavLink
+        textLink="  Already have an account ? Sign in instead !"
+        routeName="SignIn"
+      />
     </View>
   );
 };
@@ -68,5 +46,10 @@ const styles = StyleSheet.create({
   errorMessage: {
     fontSize: 16,
     color: "darkred",
+  },
+  link: {
+    color: "blue",
+    fontSize: 16,
+    marginLeft: 5,
   },
 });
