@@ -5,15 +5,33 @@ import { navigate } from "../navigationRef";
 
 const authReducer = (state, action) => {
   switch (action.type) {
+    case "CLEAR_ERROR_MESSAGE":
+      return { ...state, errorMessage: "" };
     case "SIGN_UP":
     case "SIGN_IN":
       return { ...state, token: action.payload, errorMessage: "" };
     case "ADD_ERROR":
       return { ...state, ["errorMessage"]: action.payload };
+    case "SIGN_OUT":
+      return { ...state, token: null };
 
     default:
       return state;
   }
+};
+
+const tryLocalSignIn = (dispatch) => async () => {
+  const token = await AsyncStorage.getItem("token");
+  if (token) {
+    dispatch({ type: "SIGN_IN", payload: token });
+    navigate("TrackList");
+  } else {
+    navigate("SignUp");
+  }
+};
+
+const clearErrorMessage = (dispatch) => () => {
+  dispatch({ type: "CLEAR_ERROR_MESSAGE" });
 };
 
 const signUp =
@@ -48,14 +66,18 @@ const signIn =
     }
   };
 
-const signOut = (dispatch) => {
-  return () => {
-    //Axios request
-  };
+const signOut = (dispatch) => async () => {
+  try {
+    await AsyncStorage.removeItem("token");
+    dispatch({ type: "SIGN_OUT" });
+    navigate("ResolveAuth");
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const { Provider, Context } = createDataContext(
   authReducer,
-  { signUp, signIn },
+  { signUp, signIn, clearErrorMessage, tryLocalSignIn, signOut },
   { token: null, errorMessage: "" }
 );

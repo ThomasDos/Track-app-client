@@ -11,8 +11,12 @@ import TrackDetailScreen from "./src/screens/TrackDetailScreen";
 import TrackListScreen from "./src/screens/TrackListScreen";
 //Reducer
 import { Provider as AuthProvider } from "./src/context/AuthContext";
+import { Provider as LocationProvider } from "./src/context/LocationContext";
+import { Provider as TrackProvider } from "./src/context/TrackContext";
 //
 import { setNavigator } from "./src/navigationRef";
+import ResolveAuthScreen from "./src/screens/ResolveAuthScreen";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const loginFlowNavigator = createStackNavigator({
   SignUp: SignUpScreen,
@@ -24,6 +28,13 @@ const trackListFlowNavigator = createStackNavigator({
   TrackDetail: TrackDetailScreen,
 });
 
+trackListFlowNavigator.navigationOptions = {
+  title: "Tracks",
+  tabBarIcon: (
+    <MaterialCommunityIcons name="go-kart-track" size={20} color="black" />
+  ),
+};
+
 const mainFlowNavigator = createBottomTabNavigator({
   trackListFlow: trackListFlowNavigator,
   TrackCreate: TrackCreateScreen,
@@ -31,6 +42,7 @@ const mainFlowNavigator = createBottomTabNavigator({
 });
 
 const switchNavigator = createSwitchNavigator({
+  ResolveAuth: ResolveAuthScreen,
   loginFlow: loginFlowNavigator,
   mainFlow: mainFlowNavigator,
 });
@@ -38,12 +50,16 @@ const switchNavigator = createSwitchNavigator({
 const App = createAppContainer(switchNavigator);
 export default () => {
   return (
-    <AuthProvider>
-      <App
-        ref={(navigator) => {
-          setNavigator(navigator);
-        }}
-      />
-    </AuthProvider>
+    <TrackProvider>
+      <LocationProvider>
+        <AuthProvider>
+          <App
+            ref={(navigator) => {
+              setNavigator(navigator);
+            }}
+          />
+        </AuthProvider>
+      </LocationProvider>
+    </TrackProvider>
   );
 };

@@ -3,9 +3,10 @@ import { StyleSheet, View } from "react-native";
 import { Context as AuthContext } from "../context/AuthContext";
 import AuthForm from "./../components/AuthForm";
 import NavLink from "./../components/NavLink";
+import { NavigationEvents } from "react-navigation";
 
 const SignInScreen = () => {
-  const { state, signIn } = useContext(AuthContext);
+  const { state, signIn, clearErrorMessage } = useContext(AuthContext);
   const handleSubmit = ({ email, password }) => {
     if (email && password) {
       signIn({ email, password });
@@ -13,6 +14,7 @@ const SignInScreen = () => {
   };
   return (
     <View style={styles.container}>
+      <NavigationEvents onWillFocus={clearErrorMessage} />
       <AuthForm
         headerText="Sign In for Tracker"
         errorMessage={state.errorMessage}
